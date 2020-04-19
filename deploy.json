@@ -1,0 +1,36 @@
+{
+  "namespace": "iondv",
+  "globals": {
+    "staticOptions": {
+        "maxAge": 3600000
+    }
+  },
+  "deployer": "built-in",
+  "modules": {
+    "portal": {
+      "import": {
+        "src": "applications/iondv/portal",
+        "namespace": "iondv"
+      },
+      "globals": {
+        "portalName": "ИОН ДВ. Пропуск",
+        "default": "index",
+        "templates": [
+          "applications/iondv/portal/view/templates"
+        ],
+        "statics": {
+          "static": "applications/iondv/portal/view/static"
+        },
+        "pageTemplates": {
+          "navigation": {
+            "index": "index"
+          },
+          "errors": {
+            "404": "ion_404"
+          }
+        }
+      }
+    }
+   
+  }
+}

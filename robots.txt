@@ -1,0 +1,5 @@
+# https://pass-ru.iondv.ru главное зеркало
+User-Agent: *
+Host: https://pass-ru.iondv.ru
+Disallow: /auth
+
