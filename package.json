@@ -2,20 +2,21 @@
   "name": "pass",
   "description": "Портал для системы пропусков",
   "version": "1.0.0",
-  "homepage": "https://git.iondv.ru/production/iondv",
+  "homepage": "https://github.com/iondv/pass-ru/",
   "bugs": {
-    "url": "https://git.iondv.ru/production/iondv"
+    "url": "https://github.com/iondv/pass-ru/issues"
   },
   "engines": {
-    "ion": "3.0.0"
+    "ion": "4.0.0"
   },
-  "license": "Apache 2.0",
+  "license": "Apache License 2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/iondv/pass-ru.git"
   },
   "ionModulesDependencies": {
-    "portal": "1.3.0"    
+    "rest": "3.0.0"
+    "portal": "2.0.0"    
   },
   "ionMetaDependencies": {}
 }
