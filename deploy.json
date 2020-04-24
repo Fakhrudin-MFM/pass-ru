@@ -3,34 +3,90 @@
   "globals": {
     "staticOptions": {
         "maxAge": 3600000
+    },
+    "plugins": {
+      "sessionHandler": {
+        "storage": {
+          "type": "redis",
+          "options": {
+            "host": "localhost",
+            "port": "6378"
+          }
+        }
+      },
+      "redis": {
+        "module": "core/impl/cache/redis/RedisRepository",
+        "options": {
+          "enabled": "true"
+        }
+      }
     }
   },
   "deployer": "built-in",
   "modules": {
     "portal": {
       "import": {
-        "src": "applications/iondv/portal",
+        "src": "applications/pass-ru/portal",
         "namespace": "iondv"
       },
       "globals": {
         "portalName": "ИОН ДВ. Пропуск",
         "default": "index",
         "templates": [
-          "applications/iondv/portal/view/templates"
+          "applications/pass-ru/portal/view/templates"
         ],
         "statics": {
-          "static": "applications/iondv/portal/view/static"
+          "static": "applications/pass-ru/portal/view/static"
         },
         "pageTemplates": {
           "navigation": {
-            "index": "index"
+            "index": "index",
+            "login": "login",
+            "register": "register",
+            "profile": "profile"
           },
           "errors": {
-            "404": "ion_404"
+            "404": "404"
+          }
+        }
+      }
+    },
+    "rest": {
+      "globals": {
+        "authMode": {
+          "auth": "none",
+          "profile": "none"
+        },
+        "di": {
+          "backendApi": {
+            "module": "applications/pass-ru/lib/BackendApi",
+            "options": {
+              "url": "[[backend.url]]"
+            }
+          },
+          "sms": {
+            "module": "applications/pass-ru/lib/impl/SmsMessageService",
+            "options": {
+            }
+          },
+          "auth": {
+            "module": "applications/pass-ru/service/AuthRest",
+            "options": {
+              "log": "ion://sysLog",
+              "sms": "ion://sms",
+              "backendApi": "ion://backendApi"
+            }
+          },
+          "profile": {
+            "module": "applications/pass-ru/service/ProfileRest",
+            "options": {
+              "log": "ion://sysLog",
+              "cache": "ion://redis",
+              "backendApi": "ion://backendApi"
+            }
           }
         }
       }
     }
-   
   }
 }
