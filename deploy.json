@@ -69,18 +69,11 @@
             "options": {
             }
           },
-          "auth": {
-            "module": "applications/pass-ru/service/AuthRest",
+          "pass": {
+            "module": "applications/pass-ru/service/PassRest",
             "options": {
               "log": "ion://sysLog",
               "sms": "ion://sms",
-              "backendApi": "ion://backendApi"
-            }
-          },
-          "profile": {
-            "module": "applications/pass-ru/service/ProfileRest",
-            "options": {
-              "log": "ion://sysLog",
               "cache": "ion://redis",
               "backendApi": "ion://backendApi"
             }
