@@ -15,7 +15,7 @@
     "url": "https://github.com/iondv/pass-ru.git"
   },
   "ionModulesDependencies": {
-    "rest": "3.0.0"
+    "rest": "3.0.0",
     "portal": "2.0.0"    
   },
   "ionMetaDependencies": {}

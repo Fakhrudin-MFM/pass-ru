@@ -1,0 +1,11 @@
+<% layout('./layout') -%>
+
+Passports:
+<% console.log(passports); if (Array.isArray(passports)) {
+  passports.forEach(passport => { %>
+  <p>
+    <%=passport.doc%>
+  </p>
+<%
+  })
+} %>

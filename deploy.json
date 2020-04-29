@@ -51,12 +51,12 @@
         }
       }
     },
-    "rest": {
+    "pa": {
       "globals": {
-        "authMode": {
-          "auth": "none",
-          "profile": "none"
-        },
+        "default": "pass/index",
+        "templates": [
+          "applications/pass-ru/pa/view/templates"
+        ],
         "di": {
           "backendApi": {
             "module": "applications/pass-ru/lib/BackendApi",
@@ -69,9 +69,12 @@
             "options": {
             }
           },
-          "pass": {
-            "module": "applications/pass-ru/service/PassRest",
+          "passCtrl": {
+            "module": "applications/pass-ru/pa/controllers/pass",
+            "initMethod": "init",
+            "initLevel": 0,
             "options": {
+              "module": "ion://module",
               "log": "ion://sysLog",
               "sms": "ion://sms",
               "cache": "ion://redis",

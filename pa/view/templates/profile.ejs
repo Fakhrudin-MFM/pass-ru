@@ -1,0 +1,64 @@
+<% layout('./layout') -%>
+
+<%
+  let properties = profile && profile.properties || {};
+%>
+
+<div class="login-box">
+  <form action="/<%=module%>/pass/profile" method="post" class="profile-form boxed">
+    <fieldset>
+      <section>
+        <label class="label">
+          ФИО
+        </label>
+        <label class="input">
+          <input type="text" name="fio" id="login" class="input" required value="<%= (properties.fio || '') %>" />
+        </label>
+      </section>
+      <section>
+        <label class="label">
+          Дата рождения
+        </label>
+        <label class="input">
+          <input type="text" name="birthDate" id="birthDate" class="input" value="<%= (properties.birthDate || '') %>" />
+        </label>
+      </section>
+      <section>
+        <label class="label">
+          Тип документа
+        </label>
+        <label class="input">
+          <input type="text" name="type" id="type" class="input" value="<%= (properties.type || '') %>" />
+        </label>
+      </section>
+      <section>
+        <label class="label">
+          Серия документа
+        </label>
+        <label class="input">
+          <input type="text" name="docSer" id="docSer" class="input" value="<%= (properties.docSer || '') %>" />
+        </label>
+      </section>
+      <section>
+        <label class="label">
+          Номер документа
+        </label>
+        <label class="input">
+          <input type="text" name="docNum" id="docNum" class="input" value="<%= (properties.docNum || '') %>" />
+        </label>
+      </section>
+      <section>
+        <label class="label">
+          Дата выдачи документа
+        </label>
+        <label class="input">
+          <input type="text" name="docDate" id="docDate" class="input" value="<%= (properties.docDate || '') %>" />
+        </label>
+      </section>
+    </fieldset>
+
+    <footer>
+      <button id="submit-login" type="submit" class="btn btn-primary pull-right">Save</button>
+    </footer>
+  </form>
+</div>

@@ -1,0 +1,102 @@
+<% layout('./layout') -%>
+
+<div class="login-box">
+  <div class="profile-form boxed">
+    <fieldset>
+      <section>
+        <label class="label">
+          Phone
+        </label>
+        <label class="input">
+          <input type="text" name="phone" id="phone" class="input" required />
+        </label>
+      </section>
+      <section>
+        <label class="label">
+          Login
+        </label>
+        <label class="input">
+          <input type="text" name="login" id="login" class="input" required />
+        </label>
+      </section>
+      <section>
+        <label class="label">
+          Password
+        </label>
+        <label class="input">
+          <input type="password" name="password" id="password" class="input" required />
+        </label>
+      </section>
+    </fieldset>
+
+    <footer>
+      <button id="submit-register" class="btn btn-primary pull-right">Register</button>
+    </footer>
+  </div>
+</div>
+
+<div class="login-box">
+  <div class="profile-form boxed">
+    <fieldset>
+      <section>
+        <label class="label">
+          Phone
+        </label>
+        <label class="input">
+          <input type="text" name="sms-code" id="sms-code" class="input" required />
+        </label>
+      </section>
+    </fieldset>
+
+    <footer>
+      <button id="submit-code" class="btn btn-primary pull-right">Send code</button>
+    </footer>
+  </div>
+</div>
+
+<script type="text/javascript">
+  (function($){
+    var $phone = $('#phone');
+    var $login = $('#login');
+    var $password = $('#password');
+    var $smsCode = $('#sms-code');
+
+    var $registerBtn = $('#submit-register');
+    var $sendCodeBtn = $('#submit-code');
+
+    $registerBtn.on('click', function() {
+      $.ajax({
+        url: "/pa/pass/register-verify",
+        method: 'POST',
+        data: {
+          phone: $phone.val()
+        },
+        success: function( result ) {
+          alert(result);
+        },
+        error: function () {
+          alert('err')
+        }
+      });
+    });
+
+    $sendCodeBtn.on('click', function() {
+      $.ajax({
+        url: "/pa/pass/register",
+        method: 'POST',
+        data: {
+          code: $smsCode.val(),
+          login: $login.val(),
+          password: $password.val()
+        },
+        success: function( result ) {
+          alert(result);
+        },
+        error: function () {
+          alert('err')
+        }
+      });
+    });
+
+  })(jQuery)
+</script>
