@@ -54,6 +54,7 @@
     "pa": {
       "globals": {
         "default": "pass/index",
+        "noAuth": true,
         "templates": [
           "applications/pass-ru/pa/view/templates"
         ],

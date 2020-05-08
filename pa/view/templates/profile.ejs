@@ -28,7 +28,10 @@
           Тип документа
         </label>
         <label class="input">
-          <input type="text" name="type" id="type" class="input" value="<%= (properties.type || '') %>" />
+          <select>
+            <option value="passport">Паспорт</option>
+            <option value="birthCertificate">Свидетельство о рождении</option>
+          </select>
         </label>
       </section>
       <section>
@@ -58,7 +61,7 @@
     </fieldset>
 
     <footer>
-      <button id="submit-login" type="submit" class="btn btn-primary pull-right">Save</button>
+      <button id="submit-login" type="submit" class="btn btn-primary pull-right">Сохранить</button>
     </footer>
   </form>
 </div>

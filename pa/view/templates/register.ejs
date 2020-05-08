@@ -1,11 +1,11 @@
 <% layout('./layout') -%>
 
-<div class="login-box">
-  <div class="profile-form boxed">
+<div class="login-box" id="register-box">
+  <form class="profile-form boxed">
     <fieldset>
       <section>
         <label class="label">
-          Phone
+          Телефон
         </label>
         <label class="input">
           <input type="text" name="phone" id="phone" class="input" required />
@@ -13,7 +13,7 @@
       </section>
       <section>
         <label class="label">
-          Login
+          Логин
         </label>
         <label class="input">
           <input type="text" name="login" id="login" class="input" required />
@@ -21,7 +21,7 @@
       </section>
       <section>
         <label class="label">
-          Password
+          Пароль
         </label>
         <label class="input">
           <input type="password" name="password" id="password" class="input" required />
@@ -30,17 +30,18 @@
     </fieldset>
 
     <footer>
-      <button id="submit-register" class="btn btn-primary pull-right">Register</button>
+      <button id="submit-register" class="btn btn-primary pull-right">Зарегистрироваться</button>
+      <a href="/<%=module%>/pass/login" class="pull-left">Войти</a>
     </footer>
-  </div>
+  </form>
 </div>
 
-<div class="login-box">
-  <div class="profile-form boxed">
+<div class="login-box"id="code-box">
+  <form class="profile-form boxed" action="/<%=module%>/pass/login" method="post" >
     <fieldset>
       <section>
         <label class="label">
-          Phone
+          Код
         </label>
         <label class="input">
           <input type="text" name="sms-code" id="sms-code" class="input" required />
@@ -49,13 +50,18 @@
     </fieldset>
 
     <footer>
-      <button id="submit-code" class="btn btn-primary pull-right">Send code</button>
+      <button id="submit-code" class="btn btn-primary pull-right">Отправить код</button>
     </footer>
-  </div>
+  </form>
 </div>
 
 <script type="text/javascript">
   (function($){
+    var successRedirect = '/<%=module%>/pass/index';
+    var $registerBox = $('#register-box');
+    var $codeBox = $('#code-box');
+    $codeBox.hide();
+
     var $phone = $('#phone');
     var $login = $('#login');
     var $password = $('#password');
@@ -71,11 +77,12 @@
         data: {
           phone: $phone.val()
         },
-        success: function( result ) {
-          alert(result);
+        success: function() {
+          $registerBox.hide();
+          $codeBox.show();
         },
-        error: function () {
-          alert('err')
+        error: function (err) {
+          alert(err)
         }
       });
     });
@@ -86,14 +93,14 @@
         method: 'POST',
         data: {
           code: $smsCode.val(),
-          login: $login.val(),
+          login: $login.val() || $phone.val(),
           password: $password.val()
         },
         success: function( result ) {
-          alert(result);
+          window.location.href = successRedirect;
         },
-        error: function () {
-          alert('err')
+        error: function (err) {
+          alert(err)
         }
       });
     });

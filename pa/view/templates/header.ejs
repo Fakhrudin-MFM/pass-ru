@@ -1,0 +1,38 @@
+<style type="text/css">
+  #header nav ul {
+    margin-right: 10px;
+    margin-top: 5px;
+  }
+  #header nav ul li a {
+    color: #fff;
+  }
+</style>
+<header id="header">
+
+  <ul class="nav pull-left">
+    <li class="dropdown module-switcher">
+    </li>
+  </ul>
+
+  <span class="logo pull-left">
+    <a href="/<%=module%>/pass/index"><img src="/<%=module%>/img/logo_light.png" alt="admin panel" height="40"/></a>
+  </span>
+
+  <nav>
+    <ul class="nav pull-right">
+      <% if (profile) { %>
+      <li>
+        <a href="/<%= module %>/pass/profile"><i class="fa fa-user"></i> Профиль</a>
+      </li>
+      <li>
+        <a href="/<%= module %>/pass/register"><i class="fa fa-power-off"></i> Выйти</a>
+      </li>
+      <% } else { %>
+      <li>
+        <a href="/<%= module %>/pass/login"><i class="fa fa-power-off"></i> Войти</a>
+      </li>
+      <% } %>
+    </ul>
+  </nav>
+
+</header>

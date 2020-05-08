@@ -47,7 +47,7 @@ function PassDispatcher(options) {
 
   this.init = () => {
     options.module.get(`/${paModuleName}/pass/index`, (req, res) => {
-      const {authToken} = req.session;
+      const {authToken, profile} = req.session;
       if (!authToken)
         return res.redirect(`/${paModuleName}/pass/login`);
 
@@ -59,11 +59,14 @@ function PassDispatcher(options) {
 
           return fetchPassports(authToken, cacheKey);
         })
-        .then(passports => res.render('passports', {passports}))
+        .then(passports => res.render('passports', {passports, profile}))
         .catch(err => onError(err, res));
     });
 
-    options.module.get(`/${paModuleName}/pass/login`, (req, res) => res.render('login'));
+    options.module.get(`/${paModuleName}/pass/login`, (req, res) => {
+      const {profile} = req.session;
+      return res.render('login', {profile});
+    });
 
     options.module.post(`/${paModuleName}/pass/login`, (req, res) => {
       const {
@@ -83,7 +86,10 @@ function PassDispatcher(options) {
         .catch(err => onError(err, res));
     });
 
-    options.module.get(`/${paModuleName}/pass/register`, (req, res) => res.render('register'));
+    options.module.get(`/${paModuleName}/pass/register`, (req, res) => {
+      const {profile} = req.session;
+      return res.render('register', {profile});
+    });
 
     options.module.get(`/${paModuleName}/pass/profile`, (req, res) => {
       const {profile} = req.session;
@@ -118,7 +124,6 @@ function PassDispatcher(options) {
 
       const code = generateSecretCode();
       req.session.registrationCode = code;
-      console.log(code);
       options.sms.send(phone, `Code: ${code}`)
         .then(() => res.send(true))
         .catch(err => onError(err, res));
