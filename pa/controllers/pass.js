@@ -1,5 +1,6 @@
 const paModuleName = require('modules/pa/module-name');
 const IonError = require('core/IonError');
+const moment = require('moment');
 
 function generateSecretCode() {
   const min = 1000;
@@ -31,6 +32,16 @@ function PassDispatcher(options) {
       .then(() => result);
   }
 
+  function getUserPassports(authToken) {
+      const cacheKey = `passports_${authToken}`;
+      return options.cache.get(cacheKey)
+        .then((cachedPassports) => {
+          if (cachedPassports)
+            return cachedPassports;
+          return fetchPassports(authToken, cacheKey);
+        });
+  }
+
   function authenticate(login, password) {
     let token;
     return options.backendApi.authenticate(login, password)
@@ -46,19 +57,17 @@ function PassDispatcher(options) {
   }
 
   this.init = () => {
+    const locale = 'ru';
+    moment.locale(locale);
+    options.module.locals.moment = moment;
+    options.module.locals.locale = locale;
+    options.module.locals.dateFormat = 'DD.MM.YYYY';
+
     options.module.get(`/${paModuleName}/pass/index`, (req, res) => {
       const {authToken, profile} = req.session;
       if (!authToken)
         return res.redirect(`/${paModuleName}/pass/login`);
-
-      const cacheKey = `passports_${req.session.id}`;
-      return options.cache.get(cacheKey)
-        .then((cachedPassports) => {
-          if (cachedPassports)
-            return cachedPassports;
-
-          return fetchPassports(authToken, cacheKey);
-        })
+      getUserPassports(authToken)
         .then(passports => res.render('passports', {passports, profile}))
         .catch(err => onError(err, res));
     });
@@ -92,11 +101,13 @@ function PassDispatcher(options) {
     });
 
     options.module.get(`/${paModuleName}/pass/profile`, (req, res) => {
-      const {profile} = req.session;
-      if (!profile)
+      const {authToken, profile} = req.session;
+      if (!profile || !authToken)
         return res.redirect(`/${paModuleName}/pass/login`);
 
-      res.render('profile', {profile});
+      getUserPassports(authToken)
+        .then(passports => res.render('profile', {passports, profile}))
+        .catch(err => onError(err, res));
     });
 
     options.module.post(`/${paModuleName}/pass/profile`, (req, res) => {
@@ -109,10 +120,11 @@ function PassDispatcher(options) {
 
       return options.backendApi.check(req.body)
         .then(() => options.backendApi.apply(authToken, req.body))
-        .then(() => {
+        .then(() => getUserPassports(authToken))
+        .then((passports) => {
           const profile = Object.assign(req.session.profile || {}, {properties: req.body});
           req.session.profile = profile;
-          res.render('profile', {profile});
+          res.render('profile', {profile, passports});
         })
         .catch(err => onError(err, res));
     });
@@ -149,6 +161,16 @@ function PassDispatcher(options) {
           req.session.profile = profile;
           res.send(true);
         })
+        .catch(err => onError(err, res));
+    });
+
+    options.module.get(`/${paModuleName}/pass/pass/:id`, (req, res) => {
+      const {authToken, profile} = req.session;
+      if (!profile || !authToken)
+        return res.redirect(`/${paModuleName}/pass/login`);
+
+      options.backendApi.passport(authToken, req.params.id)
+        .then(passport => res.render('pass', {passport, profile: null}))
         .catch(err => onError(err, res));
     });
 

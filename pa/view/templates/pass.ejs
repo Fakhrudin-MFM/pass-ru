@@ -1,0 +1,72 @@
+<% layout('./layout') -%>
+
+<%
+  const {applicant, state, target} = passport;
+%>
+
+<div class="login-box">
+  <form class="profile-form boxed">
+    <fieldset>
+      <section>
+        <label class="label">
+          ФИО
+        </label>
+        <label class="input">
+          <input type="text" name="fio" id="login" class="input" required value="<%= (applicant && applicant.fio || '') %>" disabled />
+        </label>
+      </section>
+      <section>
+        <label class="label">
+          Дата рождения
+        </label>
+        <label class="input">
+          <input type="text" name="birthDate" id="birthDate" class="input form-control" value="<%= (applicant && applicant.birthDate || '') %>" disabled />
+        </label>
+      </section>
+      <section>
+        <label class="label">
+          Телефон
+        </label>
+        <label class="input">
+          <input type="text" name="birthDate" id="birthDate" class="input form-control" value="<%= (applicant && applicant.birthDate || '') %>" disabled />
+        </label>
+      </section>
+
+      <section>
+        <label class="label">
+          QR
+        </label>
+        <label class="input">
+          <div id="qrcode"></div>
+        </label>
+      </section>
+
+      <section>
+        <label class="label">
+          Статус
+        </label>
+        <label class="input">
+          <input type="text" name="state" id="state" class="input form-control" value="<%= (state || '') %>" disabled />
+        </label>
+      </section>
+
+      <section>
+        <label class="label">
+          Цель
+        </label>
+        <label class="input">
+          <input type="text" name="target" id="target" class="input form-control" value="<%= (target || '') %>" disabled />
+        </label>
+      </section>
+
+    </fieldset>
+  </form>
+</div>
+
+<script type="text/javascript">
+  jquery('#qrcode').qrcode({
+    width: 128,
+    height: 128,
+    text: window.location.origin + window.location.pathname
+  });
+</script>

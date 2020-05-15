@@ -20,8 +20,9 @@
           Дата рождения
         </label>
         <label class="input">
-          <input type="text" name="birthDate" id="birthDate" class="input" value="<%= (properties.birthDate || '') %>" />
+          <input type="text" name="birthDate" id="birthDate" class="input form-control" value="<%= (properties.birthDate || '') %>" />
         </label>
+
       </section>
       <section>
         <label class="label">
@@ -65,3 +66,12 @@
     </footer>
   </form>
 </div>
+
+<% include ./passports-table %>
+
+<script type="text/javascript">
+  (function($){
+    $('#birthDate').datetimepicker({locale: '<%= locale %>', format: '<%= dateFormat %>'});
+    $('#docDate').datetimepicker({locale: '<%= locale %>', format: '<%= dateFormat %>'});
+  })(jQuery)
+</script>
