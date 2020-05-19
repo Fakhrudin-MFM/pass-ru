@@ -1,6 +1,7 @@
 const paModuleName = require('modules/pa/module-name');
 const IonError = require('core/IonError');
 const moment = require('moment');
+const csrf = require('csurf');
 
 function generateSecretCode() {
   const min = 1000;
@@ -57,6 +58,7 @@ function PassDispatcher(options) {
   }
 
   this.init = () => {
+    const csrfProtection = csrf({});
     const locale = 'ru';
     moment.locale(locale);
     options.module.locals.moment = moment;
@@ -72,12 +74,12 @@ function PassDispatcher(options) {
         .catch(err => onError(err, res));
     });
 
-    options.module.get(`/${paModuleName}/pass/login`, (req, res) => {
+    options.module.get(`/${paModuleName}/pass/login`, csrfProtection, (req, res) => {
       const {profile} = req.session;
-      return res.render('login', {profile});
+      return res.render('login', {profile, csrfToken: req.csrfToken()});
     });
 
-    options.module.post(`/${paModuleName}/pass/login`, (req, res) => {
+    options.module.post(`/${paModuleName}/pass/login`, csrfProtection, (req, res) => {
       const {
         login, password
       } = req.body;
@@ -95,22 +97,17 @@ function PassDispatcher(options) {
         .catch(err => onError(err, res));
     });
 
-    options.module.get(`/${paModuleName}/pass/register`, (req, res) => {
-      const {profile} = req.session;
-      return res.render('register', {profile});
-    });
-
-    options.module.get(`/${paModuleName}/pass/profile`, (req, res) => {
+    options.module.get(`/${paModuleName}/pass/profile`, csrfProtection, (req, res) => {
       const {authToken, profile} = req.session;
       if (!profile || !authToken)
         return res.redirect(`/${paModuleName}/pass/login`);
 
       getUserPassports(authToken)
-        .then(passports => res.render('profile', {passports, profile}))
+        .then(passports => res.render('profile', {passports, profile, csrfToken: req.csrfToken()}))
         .catch(err => onError(err, res));
     });
 
-    options.module.post(`/${paModuleName}/pass/profile`, (req, res) => {
+    options.module.post(`/${paModuleName}/pass/profile`, csrfProtection, (req, res) => {
       const {authToken} = req.session;
       if (!authToken)
         return res.redirect(`/${paModuleName}/pass/login`);
@@ -129,7 +126,12 @@ function PassDispatcher(options) {
         .catch(err => onError(err, res));
     });
 
-    options.module.post(`/${paModuleName}/pass/register-verify`, (req, res) => {
+    options.module.get(`/${paModuleName}/pass/register`, csrfProtection, (req, res) => {
+      const {profile} = req.session;
+      return res.render('register', {profile, csrfToken: req.csrfToken()});
+    });
+
+    options.module.post(`/${paModuleName}/pass/register-verify`, csrfProtection, (req, res) => {
       const {phone} = req.body;
       if (!phone)
         return onError(new IonError(400, 'Wrong request'), res);
@@ -141,7 +143,7 @@ function PassDispatcher(options) {
         .catch(err => onError(err, res));
     });
 
-    options.module.post(`/${paModuleName}/pass/register`, (req, res) => {
+    options.module.post(`/${paModuleName}/pass/register`, csrfProtection, (req, res) => {
       const {registrationCode} = req.session;
       const {
         code, login, password
@@ -170,7 +172,10 @@ function PassDispatcher(options) {
         return res.redirect(`/${paModuleName}/pass/login`);
 
       options.backendApi.passport(authToken, req.params.id)
-        .then(passport => res.render('pass', {passport, profile: null}))
+        .then((passport) => {
+          // TODO:
+          return res.render('pass', {passport, profile});
+        })
         .catch(err => onError(err, res));
     });
 

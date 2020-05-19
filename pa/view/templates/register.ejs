@@ -2,6 +2,7 @@
 
 <div class="login-box" id="register-box">
   <form class="profile-form boxed">
+    <input type="hidden" name="_csrf" value="<%=csrfToken%>">
     <fieldset>
       <section>
         <label class="label">
@@ -37,7 +38,8 @@
 </div>
 
 <div class="login-box"id="code-box">
-  <form class="profile-form boxed" action="/<%=module%>/pass/login" method="post" >
+  <form class="profile-form boxed">
+    <input type="hidden" name="_csrf" value="<%=csrfToken%>">
     <fieldset>
       <section>
         <label class="label">

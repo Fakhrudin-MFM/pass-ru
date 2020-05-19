@@ -1,8 +1,36 @@
 <% layout('./layout') -%>
 
 <%
-  const {applicant, state, target} = passport;
+  const {applicant, state, target} = (passport || {});
+
+  function readableState(state) {
+    switch(state) {
+      case 'registred': return 'Зарегистрирован';
+      case 'checked': return 'Проверен';
+      case 'refused': return 'Отклонен';
+      default: return '-';
+    }
+  }
+
+  function stateCss(state) {
+    if (['registred','checked','refused'].includes(state)) {
+      return state;
+    }
+    return '';
+  }
 %>
+
+<style type="text/css">
+  input.registred {
+    background-color: #1bff007d !important;
+  }
+  input.checked {
+    background-color: #1bff00eb !important;
+  }
+  input.refused {
+    background-color: #ff0000d1 !important;
+  }
+</style>
 
 <div class="login-box">
   <form class="profile-form boxed">
@@ -12,7 +40,7 @@
           ФИО
         </label>
         <label class="input">
-          <input type="text" name="fio" id="login" class="input" required value="<%= (applicant && applicant.fio || '') %>" disabled />
+          <input type="text" name="fio" id="login" class="input" value="<%= (applicant && applicant.fio || '') %>" disabled />
         </label>
       </section>
       <section>
@@ -20,7 +48,7 @@
           Дата рождения
         </label>
         <label class="input">
-          <input type="text" name="birthDate" id="birthDate" class="input form-control" value="<%= (applicant && applicant.birthDate || '') %>" disabled />
+          <input type="text" name="birthDate" id="birthDate" class="input" value="<%= (applicant && moment(applicant.birthDate).format(dateFormat) || '') %>" disabled />
         </label>
       </section>
       <section>
@@ -28,13 +56,13 @@
           Телефон
         </label>
         <label class="input">
-          <input type="text" name="birthDate" id="birthDate" class="input form-control" value="<%= (applicant && applicant.birthDate || '') %>" disabled />
+          <input type="text" name="birthDate" id="birthDate" class="input" value="<%= (applicant && applicant.phone || '') %>" disabled />
         </label>
       </section>
 
       <section>
         <label class="label">
-          QR
+          QR код
         </label>
         <label class="input">
           <div id="qrcode"></div>
@@ -46,7 +74,7 @@
           Статус
         </label>
         <label class="input">
-          <input type="text" name="state" id="state" class="input form-control" value="<%= (state || '') %>" disabled />
+          <input type="text" name="state" id="state" class="input <%= stateCss(state) %>" value="<%= readableState(state) %>" disabled />
         </label>
       </section>
 
@@ -55,7 +83,7 @@
           Цель
         </label>
         <label class="input">
-          <input type="text" name="target" id="target" class="input form-control" value="<%= (target || '') %>" disabled />
+          <input type="text" name="target" id="target" class="input" value="<%= (target && target.name || '') %>" disabled />
         </label>
       </section>
 
@@ -64,7 +92,7 @@
 </div>
 
 <script type="text/javascript">
-  jquery('#qrcode').qrcode({
+  $('#qrcode').qrcode({
     width: 128,
     height: 128,
     text: window.location.origin + window.location.pathname
