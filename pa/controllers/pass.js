@@ -25,7 +25,7 @@ function PassDispatcher(options) {
 
   function fetchPassports(token, cacheKey) {
     let result;
-    options.backendApi.passports(token)
+    return options.backendApi.passports(token)
       .then((passports) => {
         result = passports;
         return options.cache.set(cacheKey, passports);
@@ -34,13 +34,13 @@ function PassDispatcher(options) {
   }
 
   function getUserPassports(authToken) {
-      const cacheKey = `passports_${authToken}`;
-      return options.cache.get(cacheKey)
-        .then((cachedPassports) => {
-          if (cachedPassports)
-            return cachedPassports;
-          return fetchPassports(authToken, cacheKey);
-        });
+    const cacheKey = `passports_${authToken}`;
+    return options.cache.get(cacheKey)
+      .then((cachedPassports) => {
+        if (cachedPassports)
+          return cachedPassports;
+        return fetchPassports(authToken, cacheKey);
+      });
   }
 
   function authenticate(login, password) {
@@ -64,19 +64,26 @@ function PassDispatcher(options) {
     options.module.locals.moment = moment;
     options.module.locals.locale = locale;
     options.module.locals.dateFormat = 'DD.MM.YYYY';
+    options.module.locals.error = null;
 
     options.module.get(`/${paModuleName}/pass/index`, (req, res) => {
-      const {authToken, profile} = req.session;
+      const {
+        authToken, profile
+      } = req.session;
       if (!authToken)
         return res.redirect(`/${paModuleName}/pass/login`);
       getUserPassports(authToken)
-        .then(passports => res.render('passports', {passports, profile}))
+        .then(passports => res.render('passports', {
+          passports, profile
+        }))
         .catch(err => onError(err, res));
     });
 
     options.module.get(`/${paModuleName}/pass/login`, csrfProtection, (req, res) => {
       const {profile} = req.session;
-      return res.render('login', {profile, csrfToken: req.csrfToken()});
+      return res.render('login', {
+        profile, csrfToken: req.csrfToken()
+      });
     });
 
     options.module.post(`/${paModuleName}/pass/login`, csrfProtection, (req, res) => {
@@ -98,13 +105,23 @@ function PassDispatcher(options) {
     });
 
     options.module.get(`/${paModuleName}/pass/profile`, csrfProtection, (req, res) => {
-      const {authToken, profile} = req.session;
+      const {
+        authToken, profile
+      } = req.session;
       if (!profile || !authToken)
         return res.redirect(`/${paModuleName}/pass/login`);
 
       getUserPassports(authToken)
-        .then(passports => res.render('profile', {passports, profile, csrfToken: req.csrfToken()}))
-        .catch(err => onError(err, res));
+        .then(passports => res.render('profile', {
+          passports, profile, csrfToken: req.csrfToken()
+        }))
+        .catch((err) => {
+          options.log && options.log.error(err);
+          res.locals.error = 'Ошибка получения данных. Попробуйте обновить страницу';
+          res.render('profile', {
+            passports: [], profile, csrfToken: req.csrfToken()
+          });
+        });
     });
 
     options.module.post(`/${paModuleName}/pass/profile`, csrfProtection, (req, res) => {
@@ -121,14 +138,18 @@ function PassDispatcher(options) {
         .then((passports) => {
           const profile = Object.assign(req.session.profile || {}, {properties: req.body});
           req.session.profile = profile;
-          res.render('profile', {profile, passports});
+          res.render('profile', {
+            profile, passports, csrfToken: req.csrfToken()
+          });
         })
         .catch(err => onError(err, res));
     });
 
     options.module.get(`/${paModuleName}/pass/register`, csrfProtection, (req, res) => {
       const {profile} = req.session;
-      return res.render('register', {profile, csrfToken: req.csrfToken()});
+      return res.render('register', {
+        profile, csrfToken: req.csrfToken()
+      });
     });
 
     options.module.post(`/${paModuleName}/pass/register-verify`, csrfProtection, (req, res) => {
@@ -167,16 +188,28 @@ function PassDispatcher(options) {
     });
 
     options.module.get(`/${paModuleName}/pass/pass/:id`, (req, res) => {
-      const {authToken, profile} = req.session;
+      const {
+        authToken, profile
+      } = req.session;
       if (!profile || !authToken)
         return res.redirect(`/${paModuleName}/pass/login`);
 
       options.backendApi.passport(authToken, req.params.id)
         .then((passport) => {
-          // TODO:
-          return res.render('pass', {passport, profile});
+          if (!passport)
+            throw new IonError(404, 'Not found');
+
+          return res.render('pass', {
+            passport, profile
+          });
         })
-        .catch(err => onError(err, res));
+        .catch((err) => {
+          options.log && options.log.error(err);
+          res.locals.error = 'Ошибка получения данных. Попробуйте обновить страницу';
+          res.render('profile', {
+            passports: [], profile, csrfToken: req.csrfToken()
+          });
+        });
     });
 
     return Promise.resolve();

@@ -4,6 +4,27 @@
   let properties = profile && profile.properties || {};
 %>
 
+<style type="text/css">
+  .table-box {
+    padding: 10px;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .table-box table {
+    background-color: #fff;
+  }
+
+  .login-box {
+    margin: 0;
+    padding: 10px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+</style>
+
 <div class="login-box">
   <form action="/<%=module%>/pass/profile" method="post" class="profile-form boxed">
     <input type="hidden" name="_csrf" value="<%=csrfToken%>">
@@ -21,7 +42,8 @@
           Дата рождения
         </label>
         <label class="input">
-          <input type="text" name="birthDate" id="birthDate" class="input form-control" value="<%= (properties.birthDate || '') %>" />
+          <input type="text" id="birthDate" class="input form-control" autocomplete="off" value="<%= (properties.birthDate || '') %>" />
+          <input type="hidden" name="birthDate" value="<%= (properties.birthDate || '') %>" />
         </label>
 
       </section>
@@ -30,9 +52,13 @@
           Тип документа
         </label>
         <label class="input">
-          <select>
-            <option value="passport">Паспорт</option>
-            <option value="birthCertificate">Свидетельство о рождении</option>
+          <select name="type">
+            <option value="passport" <% if (properties.type === 'passport') {%>selected<%}%>>
+              Паспорт
+            </option>
+            <option value="birthCertificate" <% if (properties.type === 'birthCertificate') {%>selected<%}%>>
+              Свидетельство о рождении
+            </option>
           </select>
         </label>
       </section>
@@ -57,7 +83,8 @@
           Дата выдачи документа
         </label>
         <label class="input">
-          <input type="text" name="docDate" id="docDate" class="input" value="<%= (properties.docDate || '') %>" />
+          <input type="text" id="docDate" class="input form-control" autocomplete="off" value="<%= (properties.docDate || '') %>" />
+          <input type="hidden" name="docDate" class="input" value="<%= (properties.docDate || '') %>" />
         </label>
       </section>
     </fieldset>
@@ -68,11 +95,26 @@
   </form>
 </div>
 
+<div class="table-box">
 <% include ./passports-table %>
+</div>
+
 
 <script type="text/javascript">
   (function($){
-    $('#birthDate').datetimepicker({locale: '<%= locale %>', format: '<%= dateFormat %>'});
-    $('#docDate').datetimepicker({locale: '<%= locale %>', format: '<%= dateFormat %>'});
+    var $birthDateInput = $('input[name="birthDate"]');
+    var $docDateInput = $('input[name="docDate"]');
+
+    $('#birthDate')
+      .datetimepicker({locale: '<%= locale %>', format: '<%= dateFormat %>', useCurrent: false, date: moment($birthDateInput.val())})
+      .on('dp.change', function (e) {
+        $birthDateInput.val(e.date ? moment(e.date , '<%= dateFormat %>').format() : null);
+      });
+
+    $('#docDate')
+      .datetimepicker({locale: '<%= locale %>', format: '<%= dateFormat %>', useCurrent: false, date: moment($docDateInput.val())})
+      .on('dp.change', function (e) {
+        $docDateInput.val(e.date ? moment(e.date , '<%= dateFormat %>').format() : null);
+      });
   })(jQuery)
 </script>

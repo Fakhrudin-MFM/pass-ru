@@ -48,7 +48,35 @@ table.text-center th {
 .table.align td {
   text-align: right;
 } 
+
+td.registred {
+  background-color: #1bff007d !important;
+}
+td.checked {
+  background-color: #1bff00eb !important;
+}
+td.refused {
+  background-color: #ff0000d1 !important;
+}
 </style>
+
+<%
+  function readableState(state) {
+    switch(state) {
+      case 'registred': return 'Зарегистрирован';
+      case 'checked': return 'Проверен';
+      case 'refused': return 'Отклонен';
+      default: return '-';
+    }
+  }
+
+  function stateCss(state) {
+    if (['registred','checked','refused'].includes(state)) {
+      return state;
+    }
+    return '';
+  }
+%>
 
 <div class="table-wrap">
   <table class="table table-bordered">
@@ -80,12 +108,12 @@ table.text-center th {
               </td>
               <td>
                 <a href="/<%=module%>/pass/pass/<%= passport.guid %>">
-                  <%= passport.target %>
+                  <%= (passport.target && passport.target.name || '') %>
                 </a>
               </td>
-              <td>
+              <td class="<%= stateCss(passport.state) %>">
                 <a href="/<%=module%>/pass/pass/<%= passport.guid %>">
-                  <%= passport.state %>
+                  <%= readableState(passport.state) %>
                 </a>
               </td>
           </tr>

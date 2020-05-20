@@ -1,0 +1,16 @@
+<style type="text/css">
+  .error-block.has-error {
+    display: block;
+  }
+  .error-block {
+    display: none;
+  }
+</style>
+<div class="error-block <%= error ? 'has-error' : ''%>">
+  <div class="form-group err">
+    <% if (error) { %>
+      <% if (error.name) { %><h3><i class="fa fa-warning text-yellow"></i><%= error.name %></h3><% } %>
+      <p><%= error.message || error %></p>
+    <% } %>
+  </div>
+</div>

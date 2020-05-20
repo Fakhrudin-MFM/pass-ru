@@ -2,7 +2,7 @@
 
 <div class="login-box" id="register-box">
   <form class="profile-form boxed">
-    <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+    <input type="hidden" id="csrf" name="_csrf" value="<%=csrfToken%>">
     <fieldset>
       <section>
         <label class="label">
@@ -39,7 +39,6 @@
 
 <div class="login-box"id="code-box">
   <form class="profile-form boxed">
-    <input type="hidden" name="_csrf" value="<%=csrfToken%>">
     <fieldset>
       <section>
         <label class="label">
@@ -68,23 +67,31 @@
     var $login = $('#login');
     var $password = $('#password');
     var $smsCode = $('#sms-code');
+    var $csrf = $('#csrf');
 
     var $registerBtn = $('#submit-register');
     var $sendCodeBtn = $('#submit-code');
+
+    var $errBlock = $('.error-block');
+
+    function showErr(err) {
+      $errBlock.addClass('has-error').find('.form-group').append($("<p></p>").text(err.message));
+    }
 
     $registerBtn.on('click', function() {
       $.ajax({
         url: "/pa/pass/register-verify",
         method: 'POST',
         data: {
-          phone: $phone.val()
+          phone: $phone.val(),
+          _csrf: $csrf.val()
         },
         success: function() {
           $registerBox.hide();
           $codeBox.show();
         },
         error: function (err) {
-          alert(err)
+          showErr(err)
         }
       });
     });
@@ -96,16 +103,16 @@
         data: {
           code: $smsCode.val(),
           login: $login.val() || $phone.val(),
-          password: $password.val()
+          password: $password.val(),
+          _csrf: $csrf.val()
         },
         success: function( result ) {
           window.location.href = successRedirect;
         },
         error: function (err) {
-          alert(err)
+          showErr(err)
         }
       });
     });
-
   })(jQuery)
 </script>
