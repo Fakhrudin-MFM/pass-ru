@@ -1,6 +1,8 @@
 {
-  "namespace": "iondv",
+  "parametrised": true,
+  "namespace": "pass-ru",
   "globals": {
+    "defaultModule": "pa",
     "staticOptions": {
         "maxAge": 3600000
     },
@@ -9,15 +11,17 @@
         "storage": {
           "type": "redis",
           "options": {
-            "host": "localhost",
-            "port": "6378"
+            "host": "[[redis.host]]",
+            "port": "[[redis.port]]"
           }
         }
       },
       "redis": {
         "module": "core/impl/cache/redis/RedisRepository",
         "options": {
-          "enabled": "true"
+          "enabled": "true",
+          "host": "[[redis.host]]",
+          "port": "[[redis.port]]"
         }
       }
     }
@@ -58,16 +62,22 @@
         "templates": [
           "applications/pass-ru/pa/view/templates"
         ],
+        "statics": {
+          "static": "applications/pass-ru/themes/pass/node_modules"
+        },
         "di": {
           "backendApi": {
             "module": "applications/pass-ru/lib/BackendApi",
             "options": {
-              "url": "[[backend.url]]"
+              "url": "[[passapi.url]]",
+              "clientLogin": "[[passapi.login]]",
+              "clientPassword": "[[passapi.password]]"
             }
           },
           "sms": {
-            "module": "applications/pass-ru/lib/impl/SmsMessageService",
+            "module": "applications/pass-ru/lib/impl/sms/SmsMessageService",
             "options": {
+
             }
           },
           "passCtrl": {

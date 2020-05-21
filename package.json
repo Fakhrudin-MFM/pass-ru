@@ -20,6 +20,7 @@
   },
   "ionMetaDependencies": {},
   "dependencies": {
-    "csurf": "^1.11.0"
+    "csurf": "^1.11.0",
+    "sms-gateway.js": "^1.0.4"
   }
 }

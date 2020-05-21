@@ -1,0 +1,11 @@
+{
+  "name": "pass",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "jquery.qrcode": "1.0.3"
+  }
+}
