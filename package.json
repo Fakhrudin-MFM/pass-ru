@@ -16,7 +16,8 @@
   },
   "ionModulesDependencies": {
     "rest": "3.0.0",
-    "portal": "2.0.0"
+    "portal": "2.0.0",
+	"pa": "*"
   },
   "ionMetaDependencies": {},
   "dependencies": {
